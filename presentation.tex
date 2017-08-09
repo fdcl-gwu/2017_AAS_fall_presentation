@@ -1,0 +1,76 @@
+%\documentclass[11pt,professionalfonts,hyperref={pdftex,pdfpagemode=none,pdfstartview=FitH}]{beamer}
+%\usepackage{times}
+\documentclass[11pt,professionalfonts]{beamer}
+\usefonttheme{serif}
+\usepackage{presentation_packages}
+\usepackage[version=3]{mhchem}
+\newcommand{\hilight}[1]{\colorbox{green}{#1}}
+
+\definecolor{mygray}{gray}{0.9}
+\definecolor{RoyalBlue}{rgb}{0.25,0.41,0.88}
+\def\Emph{\textcolor{RoyalBlue}}
+
+\definecolor{tmp}{rgb}{0.804,0.941,1.0}
+\setbeamercolor{numerical}{fg=black,bg=tmp}
+\setbeamercolor{exact}{fg=black,bg=red}
+
+\mode<presentation> 
+{
+  \usetheme{Warsaw}
+  \usefonttheme{serif}
+  \setbeamercovered{transparent}
+}
+
+\setbeamertemplate{footline}%{split theme}
+{%
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fill]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{title in head/foot}
+%    \usebeamerfont{title in head/foot}\mypaper\hfill \insertframenumber/\inserttotalframenumber
+    \usebeamerfont{title in head/foot}\hfill \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}}%
+  \vskip0pt%
+} \setbeamercolor{box}{fg=black,bg=yellow}
+
+
+\title[Autonomous Landing]{\large\textbf  Geometric Control for Autonomous Landing on Asteroids}
+
+\author{\vspace*{-0.3cm}}
+   
+\institute{
+	\footnotesize
+	{\normalsize\bf{Shankar Kulumani, Kuya Takami \\ Taeyoung Lee}}\\
+	\vspace*{0.2cm}
+  	\textbf{Department of Mechanical \& Aerospace Engineering}\\ \vspace*{0.5cm}
+ 	\begin{figure} %figure%
+       	\includegraphics[width=0.75\textwidth]{gw_txh_2cs_pos}
+  	\end{figure}
+}
+\date{\today}
+
+\begin{document}
+%=======================================================%
+
+\setcounter{framenumber}{-1}
+\begin{frame} %-----------------------------%
+  \titlepage
+\end{frame}   %-----------------------------%
+
+\section*{}
+\subsection*{Motivation}  
+
+\begin{frame} %-----------------------------%
+\frametitle{Near Earth Asteroids} 
+Increased interest in the study of small bodies
+\begin{itemize}[<+->]
+	\item Preserve conditions of solar system formation
+	\item Impact hazard (NASA ARM, B612 Foundation) 
+	\item Asteroid Mining - extract useful materials
+\end{itemize}
+
+
+\end{frame}
+\end{document}
+

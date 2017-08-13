@@ -4,6 +4,7 @@
 \usefonttheme{serif}
 \usepackage{presentation_packages}
 \usepackage[version=3]{mhchem}
+\DeclareSIUnit\year{yr}
 \newcommand{\hilight}[1]{\colorbox{green}{#1}}
 
 \definecolor{mygray}{gray}{0.9}
@@ -35,7 +36,7 @@
 } \setbeamercolor{box}{fg=black,bg=yellow}
 
 
-\title[Autonomous Landing]{\large\textbf  Geometric Control for Autonomous Landing on Asteroids}
+\title[Autonomous Landing]{\large\textbf Geometric Control for Autonomous Landing on Asteroid Itokawa using Visual Imagery  }
 
 \author{\vspace*{-0.3cm}}
    
@@ -60,13 +61,101 @@
 
 \section*{}
 \subsection*{Introduction}  
+\begin{frame}{Asteroid Missions}
+\begin{itemize}
+    \item Science - insight into the early formation of the solar system
+    \item Mining - vast quantities of useful materials
+    \item Impact - high risk from hazardous near-Earth asteroids
+\end{itemize}    
+
+\begin{center}
+    \includegraphics[height=0.35\textheight]{figures/near_mos_20001203_full.jpg}
+    \hfill
+    \includegraphics[height=0.35\textheight]{figures/Itokawa8_hayabusa_1210.jpg}
+\end{center}
+\end{frame}
+
+\begin{frame}{Asteroid Mining}
+    \begin{itemize}
+      \item Useful materials can be extracted from asteroids to support:
+      \begin{itemize}
+          \item Propulsion, construction, life support, agriculture, and precious/strategic metals
+      \end{itemize}
+      \item Commercialization of near-Earth asteroids is feasible
+    \end{itemize}
+
+\pause
+
+\begin{center}
+\small
+    \begin{tabular}{|l|r|r|}
+        \hline 
+        Element & Price (\SI{}[\$\,]{\per\kilo\gram}) & Sales (\SI{}[\$\,]{M\per\year}) \\
+        \hline \hline 
+        Phosphorous (P) & \num{0.08}  & \num{2167} \\
+        Gallium (Ga) & \num{300.00}  & \num{1544} \\
+        Germanium (Ge) & \num{745.00} & \num{6145} \\
+        \hline \hline 
+        Platinum (Pt) & \num{12394.00} & \num{1705} \\
+        Gold (Au) & \num{12346.00} & \num{49} \\
+        Osmium (Os) & \num{12860.00} & \num{307} \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\end{frame}
 
 \section*{}
 \subsection*{Motivation}  
 
 \section*{Mathematical Background}
 \subsection*{Coupled Dynamics}
+\begin{frame}{Gravitational Modeling} %-----------------------------%
 
+\begin{itemize}
+  \item Asteroids are extended bodies not point masses
+  \pause
+  \item Spherical Harmonic - only valid outside of circumscribing sphere
+    {
+    \small
+    \begin{align*}
+      U(\vecbf{r} ) = \frac{\mu}{r} \sum_{n=0}^\infty \sum_{m=0}^\infty \parenth{\frac{R}{r}}^nP_{n,m}(\sin \phi) \braces{ C_{nm} \cos(m \lambda) + S_{nm} \sin(m \lambda)} 
+    \end{align*}
+    }
+    \pause
+  \item Infinite series is an approximation and adds complexity
+    \begin{itemize}
+        \item Model switching at circumscribing sphere
+        \item Coefficient matching used to ensure continuity 
+    \end{itemize}
+\end{itemize}
+
+\note[itemize]{
+  \item Models require detailed data from orbit about asteroid (OD process determines gravity field)
+  \item Simplified models (triaxial ellipsoid allows analytical insight)
+  \item Previous work fails to consider coupled dyanmics
+  }
+
+\end{frame}   %-----------------------------%
+
+\section*{}
+\subsection*{System Model}
+
+\begin{frame}{Polyhedron Gravitation Model}
+
+\begin{itemize}
+    \item Potential is a function of only the shape model
+    \item Globally valid, closed-form expression of potential
+    \item Exact potential assumes a constant density 
+    \item Accuracy solely dependent on shape model
+\end{itemize}
+\only<2>{
+\begin{align*}\label{eq:potential}
+    U(\vecbf{r}) &= \frac{1}{2} G \sigma \sum_{e \in \text{edges}} \vecbf{r}_e \cdot \vecbf{E}_e \cdot \vecbf{r}_e \cdot L_e - \frac{1}{2}G \sigma \sum_{f \in \text{faces}} \vecbf{r}_f \cdot \vecbf{F}_f \cdot \vecbf{r}_f \cdot \omega_f 
+\end{align*}
+}
+
+\end{frame}
 \subsection*{Polyhedron Potential Model}
 
 \section*{}

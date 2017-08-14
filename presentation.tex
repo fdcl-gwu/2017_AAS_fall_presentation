@@ -108,8 +108,42 @@
 \section*{}
 \subsection*{Motivation}  
 
+\begin{frame}{Asteroid Landing}
+    \begin{itemize}
+        \item Long history of asteroid/planetary missions
+            \begin{itemize}
+                \item NEAR, Hayabusa, OSIRIS-REX, Rosetta
+            \end{itemize}
+            \pause
+        \item Asteroid landing is particularly challenging:
+            \begin{itemize}
+                \item<3-> Challenging dynamics - low gravity and spinning
+                \item<4-> Poor model - ground based observation of dim bodies
+                \item<5-> Attitude coupling - pertubations are large 
+            \end{itemize}
+    \end{itemize}
+    \begin{center}
+        \includegraphics[width=0.6\textwidth,height=0.4\textheight,keepaspectratio]{figures/osiris_rex.png}~
+        \includegraphics[width=0.6\textwidth,height=0.4\textheight,keepaspectratio]{figures/Rosetta_Philae_Artist_Impression_Close_4k.jpg}
+    \end{center} 
+\end{frame}
+
+\begin{frame}{Problem Statement}
+    \begin{itemize}
+        \item Develop copuled equations of motion for a spacecraft
+        \item Use EOMs on \SE to derive landing control law
+        \item Implement monocular localization to provide state estimates
+        \item Alleviates many of the issues of past approaches:
+            \pause
+            \begin{itemize}
+                \item Explicitly consider rotational dynamics
+                \item \SE geometric control instead of sliding mode
+                \item Onboard state measurements for ``autonomy''
+            \end{itemize}
+    \end{itemize}
+\end{frame}
 \section*{}
-\subsection*{Coupled Dynamics}
+\subsection*{Mathematical Background}
 \begin{frame}{Gravitational Modeling} %-----------------------------%
 
 \begin{itemize}
@@ -138,8 +172,6 @@
 
 \end{frame}   %-----------------------------%
 
-\section*{}
-\subsection*{System Model}
 
 \begin{frame}{Polyhedron Gravitation Model}
 
@@ -156,7 +188,6 @@
 }
 
 \end{frame}
-\subsection*{Polyhedron Potential Model}
 
 \section*{}
 \subsection*{Geometric Control}

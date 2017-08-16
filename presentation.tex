@@ -129,7 +129,7 @@
 \end{frame}
 
 \begin{frame}{Problem Statement}
-    \begin{itemize}
+    \begin{enumerate}
         \item Develop copuled equations of motion for a spacecraft
         \item Use EOMs on \SE to derive landing control law
         \item Implement monocular localization to provide state estimates
@@ -140,7 +140,7 @@
                 \item \SE geometric control instead of sliding mode
                 \item Onboard state measurements for ``autonomy''
             \end{itemize}
-    \end{itemize}
+    \end{enumerate}
 \end{frame}
 \section*{}
 \subsection*{Mathematical Background}
@@ -189,19 +189,144 @@
 
 \end{frame}
 
+\begin{frame}{Kinematics of Dumbbell}
+    \begin{itemize}
+        \item Dynamics derived on \SE, Special Euclidean group
+        \item Rigid dumbbell model - captures attitude coupling
+        \pause
+        \begin{itemize}
+            \item \( \vecbf{x} \in \R^3 \) - inertial position of COM
+            \item \( R \in \SO\) - transforms from body to inertial frame
+            \item \( \vecbf{\Omega} \in \R^3 \) - the angular velocity of the spacecraft 
+            \item \( R_A \in \SO \) - transforms from asteroid to inertial frame
+        \end{itemize}    
+        \pause
+    \item Preserves the geometric properties of configuration space
+    \item Attitude and Translational motion is directly coupled
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Equations of Motion}
+
+    \begin{itemize}
+        \item Polyhedron potential in translational and rotational dynamics
+        \begin{align*}
+            \dot{\vb{x}} &= \vb{v}, \\
+            \parenth{m_1 + m_2} \dot{\vecbf{v}} &= m_1 R_A \deriv{U}{\vecbf{z}_1} + m_2 R_A \deriv{U}{\vecbf{z}_2} + \vecbf{u}_f, \\
+            \dot{R} &= R S(\vb{\Omega}) , \\
+            J \dot{\vecbf{\Omega}} + \vecbf{\Omega} \times J \vecbf{\Omega} &= \vecbf{M}_1 + \vecbf{M}_2 + \vecbf{u}_m. 
+        \end{align*}
+    \item Moment on dumbbell
+        \begin{align*}
+            \vecbf{M}_i = m_i \parenth{S(R_A^T \vb{\rho}_i) R^T \deriv{U}{\vb{z}_i}}.
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
 \section*{}
 \subsection*{Geometric Control}
+\begin{frame}{Nonlinear Control}
+    \begin{itemize}
+        \item Geometric control used to track a desired trajectory
+        \item Developed directly on the nonlinear manifold
+            \begin{itemize}
+                \item Avoids chattering issues of sliding mode control
+                \item Incorporates attitude dynamics
+                \item Stability guarantee
+            \end{itemize}
+    \end{itemize}
 
-\section*{}
-\subsection*{Blender}
+\pause
+\begin{align*}
+    \vb{u}_m &= - k_R e_R - k_\Omega e_\Omega + \Omega \times J \Omega - J \parenth{\hat{\Omega} R^T R_d \Omega_d - R^T R_d \dot{\Omega}_d}  \\
+             &- \vb{M}_1 - \vb{M_2} , \\
+    \vb{u}_f &= - k_x e_x  - k_v e_v + ( m_1  + m_2 ) \ddot{x}_d - \vb{F}_1 - \vb{F}_2 
+\end{align*}
+\end{frame}
 
-\subsection*{Structure from Motion}
+
 
 \section*{}
 \subsection*{Numerical Simulation}
 
+\begin{frame}{Landing trajectory}
+    \begin{itemize}
+        \item Goal: transition from  orbit about Itokawa to vertical descent
+        \item Attitude controlled to point camera at surface
+            \begin{itemize}
+                \item \( \vb{b}_1 \) - body axis points at surface
+                \item \( \vb{b}_3 \) - orthogonal projection in \( \vb{e}_3, \vb{b}_1\) plane
+            \end{itemize}
+    \end{itemize}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \begin{align*}
+            \vb{b}_{1d} &= - \frac{\vb{x}}{\norm{\vb{x}}} , \\
+            \vb{b}_{3d} &= \frac{\vb{f}_3 - \parenth{\vb{f}_3 \cdot \vb{b}_{1d}} \vb{b}_{1d}}{\norm{\vb{f}_3 - \parenth{\vb{f}_3 \cdot \vb{b}_{1d}} \vb{b}_{1d}}}, \\
+            \vb{b}_{2d} &= \vb{b}_{3d} \times \vb{b}_{1d} , \\
+        R_d &= \begin{bmatrix} \vb{b}_{1d} & \vb{b}_{2d} & \vb{b}_{3d} \end{bmatrix} .
+        \end{align*}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \includegraphics[width=\columnwidth,keepaspectratio,trim={30mm 20mm 30mm 20mm},clip]{figures/traj_fig.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Simulated imagery using Blender}
+    \begin{itemize}
+        \item Free \& open-source 3D computer graphics program
+        \item Offer programmatic interface through Python
+        \item Images of Itokawa emulated to match NEAR MSI camera
+    \end{itemize}
+    \begin{center}
+    \movie[loop,showcontrols]{\includegraphics[width=0.5\textwidth]{figures/test000837.png}}{videos/itokawa_landing.mp4}~
+    \movie[loop,showcontrols]{\includegraphics[width=0.5\textwidth]{figures/test000837.png}}{videos/itokawa_high.mp4}
+\end{center}
+\end{frame}
+
+\begin{frame}{Monocular Localization}
+    \begin{itemize}
+        \item ORB-SLAM2 - Open-source mapping and localization framework
+        \item Allows for real-time monocular based SLAM
+        \item Utilized here to demonstrate localization from imagery
+    \end{itemize}
+    
+    \begin{center}
+    \movie[loop,showcontrols]{\includegraphics[width=0.5\textwidth]{figures/orbslam_mappoints.png}}{videos/mappoints.mp4}~
+    \movie[loop,showcontrols]{\includegraphics[width=0.5\textwidth]{figures/orbslam_localization.png}}{videos/local_crop.mp4}
+\end{center}
+\end{frame}
 \section*{}
 \subsection*{Conclusions}
 
+\begin{frame}{Conclusions}
+    \begin{itemize}
+        \item Nonlinear controller for landing on an asteroid
+        \item Coupled dynamics derived and considered on \SE
+        \item Localization performed using simulated monocular imagery
+        \item Future Research Goals:
+            \begin{itemize}
+                \item Utilize state estimates directly in controller
+                \item Update shape and gravity model in real-time
+            \end{itemize}
+    \end{itemize} 
+\end{frame}
+
+\begin{frame}[c]{Thank you}
+  \centering
+  
+  \textbf{\large Flight Dynamics \& Control Lab} \\
+  Mechanical \& Aerospace Engineering \\
+  School of Engineering \& Applied Science
+  
+  \begin{figure} %figure%
+        \includegraphics[width=0.75\textwidth]{gw_txh_2cs_pos}
+    \end{figure}
+  
+  \url{https://fdcl.seas.gwu.edu}
+\end{frame}
 \end{document}
 

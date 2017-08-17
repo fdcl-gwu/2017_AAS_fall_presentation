@@ -36,7 +36,7 @@
 } \setbeamercolor{box}{fg=black,bg=yellow}
 
 
-\title[Autonomous Landing]{\large\textbf Geometric Control for Autonomous Landing on Asteroid Itokawa using Visual Imagery  }
+\title[Autonomous Landing]{\large\textbf Geometric Control for Autonomous Landing on Asteroid Itokawa using Visual Localization}
 
 \author{\vspace*{-0.3cm}}
    
@@ -81,10 +81,10 @@
       \begin{itemize}
           \item Propulsion, construction, life support, agriculture, and precious/strategic metals
       \end{itemize}
+        \pause
       \item Commercialization of near-Earth asteroids is feasible
     \end{itemize}
 
-\pause
 
 \begin{center}
 \small
@@ -131,19 +131,47 @@
 \begin{frame}{Problem Statement}
     \begin{enumerate}
         \item Develop copuled equations of motion for a spacecraft
-        \item Use EOMs on \SE to derive landing control law
+        \item EOMs on \( \SE \) to derive landing control law
+            \begin{itemize}
+                \item \( \SE \) - special euclidean group describes the general motion of rigid bodies
+            \end{itemize}
         \item Implement monocular localization to provide state estimates
         \item Alleviates many of the issues of past approaches:
             \pause
             \begin{itemize}
                 \item Explicitly consider rotational dynamics
-                \item \SE geometric control instead of sliding mode
+                \item Geometric control defined directly on \( \SE \)
                 \item Onboard state measurements for ``autonomy''
             \end{itemize}
     \end{enumerate}
 \end{frame}
 \section*{}
 \subsection*{Mathematical Background}
+
+\begin{frame}{Attitude Parameterizations}
+	\begin{itemize}
+		\item Euler Angles
+		\begin{itemize}
+			\item Minimal representation used for small attitude changes.
+			\item Singularities exist for large angle slews: requires switching between 24 sequences
+			\item Complicated trigonometric functions
+		\end{itemize}
+		\pause
+		\item Quaternion 
+		\begin{itemize}
+			\item No singularities
+			\item Two anti-podal quaternions for the same attitude
+			\item Unwinding behavior for control systems
+		\end{itemize}
+		\pause
+		\item Geometric control
+		\begin{itemize}
+			\item Globally and uniquely characterize attitude: \( R \in \SO \)
+			\item Controller is globally valid for large angle maneuvers
+		\end{itemize}
+	\end{itemize}
+	
+    \end{frame}
 \begin{frame}{Gravitational Modeling} %-----------------------------%
 
 \begin{itemize}
@@ -201,6 +229,11 @@
             \item \( R_A \in \SO \) - transforms from asteroid to inertial frame
         \end{itemize}    
         \pause
+    \item Simple model which captures dynamic coupling  
+        \begin{itemize}
+            \item Models the mass distribution of spacecraft 
+        \end{itemize}
+        \pause
     \item Preserves the geometric properties of configuration space
     \item Attitude and Translational motion is directly coupled
 \end{itemize}
@@ -233,7 +266,7 @@
             \begin{itemize}
                 \item Avoids chattering issues of sliding mode control
                 \item Incorporates attitude dynamics
-                \item Stability guarantee
+                \item Asymptotic trajectory tracking stability
             \end{itemize}
     \end{itemize}
 
@@ -250,7 +283,7 @@
 \section*{}
 \subsection*{Numerical Simulation}
 
-\begin{frame}{Landing trajectory}
+\begin{frame}{Landing trajectory - Attitude}
     \begin{itemize}
         \item Goal: transition from  orbit about Itokawa to vertical descent
         \item Attitude controlled to point camera at surface
@@ -274,6 +307,107 @@
 \end{columns}
 \end{frame}
 
+\begin{frame}{Landing Trajectory - Position}
+    \begin{itemize}
+        \item Transition from horizontal motion to vertical descent
+        \begin{itemize}
+            \item Move from inertial \( \vb{e}_2 \) to asteroid \( \vb{f}_1 \) axis
+            \item Remain in the equatorial plane ( \(\vb{f_1}, \vb{f}_2\) plane)
+        \end{itemize}
+        \pause
+    \item Command is divided into two segments
+        \begin{itemize}
+            \item Move to \( \vb{f}_1\) along a circular path
+            \item Vertical descent along \( \vb{f}_1 \)
+        \end{itemize}
+    \end{itemize}
+
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \footnotesize
+            \begin{align*}
+                \vb{x}_d = 
+                \begin{cases}
+                    2.550 \begin{bmatrix} \sin{\omega t} & -\cos{\omega t} & 0 \end{bmatrix}, & t \leq t_d \\
+                    R_A \begin{bmatrix} \frac{2}{t_d} (t - t_d) + 2.550 & 0 & 0 \end{bmatrix}, & t > t_d , 
+                \end{cases}
+            \end{align*}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \visible<2->{\includegraphics[width=\columnwidth]{figures/pos_fig.pdf}}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Blender Simulation}
+    \only<1>{
+    \begin{itemize}
+        \item Open-source computer graphics rendering
+            \begin{itemize}
+                \item Photorealistic Rendering
+                \item Realistic material and lighting 
+                \item Physics based simulation and game engine
+            \end{itemize}
+            \pause
+        \item Additional capability by utilizing a Python API 
+            \begin{itemize}
+                \item Load a asteroid shape model
+                \item Define camera properties/location
+                \item Define light source and position
+                \item Render image
+            \end{itemize}
+\end{itemize}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth,height=0.3\textheight,keepaspectratio]{figures/rendering.jpg}~
+    \includegraphics[width=0.5\textwidth,height=0.3\textheight,keepaspectratio]{figures/463e785104.jpg}
+\end{center}
+}
+
+\only<2>{
+    \begin{itemize}
+        \item Can render scenes using a graphical interface
+    \end{itemize}
+    \includegraphics[width=\textwidth]{figures/blender_screenshot.png}
+}
+
+\only<3>{
+    \begin{itemize}
+        \item Python used to generate imagery - incorporate in larger code
+    \end{itemize}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \includegraphics[width=\columnwidth]{figures/blender_screenshot.png}
+
+        \includegraphics[width=\columnwidth]{figures/itokawa_blender.png}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \scriptsize
+            \begin{semiverbatim}
+            import bpy
+    
+
+            scene = bpy.context.scene
+
+            bpy.ops.import\_scene.obj(`ast.obj')
+
+            ast = bpy.data.objects[asteroid]
+
+
+            ast.scale = [1, 1, 1] 
+
+            ast.location = (0, 0, 0)
+          
+
+            scene.render.filepath = `out.png'
+
+            bpy.ops.render.render(write\_still=True)
+
+            \end{semiverbatim}
+        \end{column}
+    \end{columns}
+}
+\end{frame}
 
 \begin{frame}{Simulated imagery using Blender}
     \begin{itemize}
